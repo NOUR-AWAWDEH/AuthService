@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace AuthService.Models
+namespace AuthService.Models.Dtos
 {
     public class UserDto
     {
@@ -21,7 +21,7 @@ namespace AuthService.Models
         public UserRole Role { get; set; } = UserRole.User; // Using an Enum prevents role injection
 
         [Required]
-        [JsonProperty(Order = 4)]  
+        [JsonProperty(Order = 4)]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
             ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
@@ -29,5 +29,5 @@ namespace AuthService.Models
 
     }
 
-    
+
 }

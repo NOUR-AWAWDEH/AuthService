@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AuthService.Models
+namespace AuthService.Models.Dtos
 {
     public class RefreshTokenRequestDto
     {

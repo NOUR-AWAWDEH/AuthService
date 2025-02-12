@@ -1,6 +1,6 @@
 ﻿using AuthService.Data;
 using AuthService.Entity;
-using AuthService.Models;
+using AuthService.Models.Dtos;
 using AuthService.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,10 +49,10 @@ namespace AuthService.Services
             return await CreateTokenResponse(user);
         }
 
-        private async Task<User> ValidateRefreshTokenAsync(Guid userId, string refreshToken) 
+        private async Task<User> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
             var user = await context.Users.FindAsync(userId);
-            if (user is null 
+            if (user is null
                 || user.RefreshToken != refreshToken
                 || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
@@ -61,7 +61,7 @@ namespace AuthService.Services
             return user;
         }
 
-        private async Task<TokenResponseDto> CreateTokenResponse(User user) 
+        private async Task<TokenResponseDto> CreateTokenResponse(User user)
         {
             return new TokenResponseDto
             {
@@ -69,8 +69,8 @@ namespace AuthService.Services
                 RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
             };
         }
-        
-        private string GenerateRefreshToken() 
+
+        private string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();
@@ -79,7 +79,7 @@ namespace AuthService.Services
 
         }
 
-        private async Task<string>GenerateAndSaveRefreshTokenAsync(User user)
+        private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
         {
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
@@ -139,9 +139,9 @@ namespace AuthService.Services
                 Role = userRole
             };
 
-            //// Hash the password
-            //var passwordHasher = new PasswordHasher<User>();
-            //user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
+            // Hash the password
+            var passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
 
             // Add the user to the database
             context.Users.Add(user);
@@ -149,5 +149,32 @@ namespace AuthService.Services
 
             return user;
         }
+
+        public async Task<User?> FindByEmailAsync(string email)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user;
+        }
+
+        public async Task<string?> GeneratePasswordResetTokenAsync(string email)
+        {
+            // Find the user by email
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return null; // User does not exist
+            }
+
+            // Generate a refresh token (used as a reset token here)
+            var resetToken = GenerateRefreshToken();
+            user.RefreshToken = resetToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(1); // Token valid for 1 hour
+
+            await context.SaveChangesAsync(); // Save the token in the database
+
+            return resetToken; // Return the generated token
+        }
+
     }
+
 }

@@ -1,5 +1,4 @@
 ﻿using AuthService.Entity;
-using AuthService.Models;
 using AuthService.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AuthService.Models.Enums;
+using AuthService.Models.Dtos;
 namespace AuthService.Controllers
 {
     [Route("api/[controller]")]
@@ -64,5 +64,27 @@ namespace AuthService.Controllers
         {
             return Ok("You are an Admin");
         }
+        
+        //[HttpPost("ForgetPassword")]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> ForgetPassword(RequestForgetPasswordDto request)
+        //{
+        //    if (ModelState.IsValid) 
+        //    {
+        //        //valedate user
+        //        var user = await authService.FindByEmailAsync(request.Email);
+        //        if (User == null)
+        //            return BadRequest("Invalid payload");
+
+        //        //var token = await authService.GeneratePasswordResetTokenAsync(user);
+        //        if (string.IsNullOrEmpty(token))
+        //            return BadRequest("Something went wrong");
+
+        //    }
+
+        //    return BadRequest("");
+
+        //}
+
     }
 }

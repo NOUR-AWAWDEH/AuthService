@@ -1,5 +1,5 @@
 ﻿using AuthService.Entity;
-using AuthService.Models;
+using AuthService.Models.Dtos;
 
 namespace AuthService.Services
 {
@@ -10,5 +10,9 @@ namespace AuthService.Services
         Task<TokenResponseDto?> LoginAsync(LoginDto request);
         
         Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
+        
+        Task<User?> FindByEmailAsync(string email);
+
+        Task<string?> GeneratePasswordResetTokenAsync(string email);
     }
 }
